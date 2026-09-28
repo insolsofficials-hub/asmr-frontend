@@ -12,12 +12,12 @@ const copy = {
 };
 
 export default function AuthPage() {
-  const { user, refresh } = useAuth();
+  const { user, membership, refresh } = useAuth();
   const navigate = useNavigate(); const location = useLocation();
   const [mode, setMode] = useState('signin');
   const [form, setForm] = useState({ name: '', email: '', password: '', code: '' });
   const [message, setMessage] = useState(''); const [error, setError] = useState(''); const [loading, setLoading] = useState(false);
-  if (user) return <Navigate to={user.role === 'admin' ? '/admin' : '/portal'} replace />;
+  if (user) return <Navigate to={user.role === 'admin' ? '/admin' : membership ? '/portal' : '/join'} replace />;
   const change = event => setForm(value => ({ ...value, [event.target.name]: event.target.value }));
   const switchMode = next => { setMode(next); setMessage(''); setError(''); setForm(value => ({ ...value, code: '', password: next === 'forgot' ? '' : value.password })); };
   const checkEmail = async () => {
@@ -33,7 +33,7 @@ export default function AuthPage() {
     event.preventDefault(); setLoading(true); setError(''); setMessage('');
     try {
       if (mode === 'register') { const result = await api('/auth/register', { method: 'POST', body: JSON.stringify(form) }); setMode('verify'); setMessage(result.message); }
-      else if (mode === 'verify') { const result = await api('/auth/verify-registration', { method: 'POST', body: JSON.stringify(form) }); await refresh(); navigate(location.state?.from || (result.data.hasMembership ? '/portal' : '/join'), { replace: true }); }
+      else if (mode === 'verify') { const result = await api('/auth/verify-registration', { method: 'POST', body: JSON.stringify(form) }); await refresh(); navigate(result.data.hasMembership ? location.state?.from || '/portal' : '/join', { replace: true }); }
       else if (mode === 'forgot') { const result = await api('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email: form.email }) }); setMode('reset'); setMessage(result.message); }
       else if (mode === 'reset') { const result = await api('/auth/reset-password', { method: 'POST', body: JSON.stringify(form) }); setMode('signin'); setForm(value => ({ ...value, code: '', password: '' })); setMessage(result.message); }
       else { const result = await api('/auth/login', { method: 'POST', body: JSON.stringify(form) }); const data = await refresh(); navigate(location.state?.from || (result.data.user.role === 'admin' || data?.user?.role === 'admin' ? '/admin' : result.data.hasMembership ? '/portal' : '/join'), { replace: true }); }

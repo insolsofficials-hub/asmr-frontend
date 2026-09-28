@@ -19,7 +19,14 @@ function UploadField({ label, name, accept, file, icon: Icon, hint, error, onCha
 export default function JoinPage() {
   const { user, membership, refresh } = useAuth();
   const [form,setForm]=useState(initial); const [errors,setErrors]=useState({}); const [status,setStatus]=useState('idle'); const [submitError,setSubmitError]=useState('');
-  useEffect(()=>{if(user?.email)setForm(value=>({...value,email:user.email}));},[user]);
+  useEffect(()=>{
+    if (!user) return;
+    setForm(value=>({
+      ...value,
+      fullName: value.fullName || user.name || '',
+      email: user.email || value.email,
+    }));
+  },[user]);
   const completion=useMemo(()=>Math.round(Object.entries(form).filter(([,v])=>Array.isArray(v)?v.length:v).length/14*100),[form]);
   const change=e=>{const {name,value}=e.target;setForm(v=>({...v,[name]:value}));setErrors(v=>({...v,[name]:undefined}));};
   const toggleInterest=value=>{setForm(v=>({...v,interests:v.interests.includes(value)?v.interests.filter(x=>x!==value):[...v.interests,value]}));setErrors(v=>({...v,interests:undefined}));};
