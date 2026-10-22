@@ -12,6 +12,7 @@ export class SubmissionError extends Error {
 export async function submitEventRegistration(payload) {
   const body = new FormData();
   Object.entries(payload).forEach(([key,value]) => {
+    if (value == null) return;
     if (key === 'interests') value.forEach(item => body.append('interests', item));
     else body.append(key, value);
   });

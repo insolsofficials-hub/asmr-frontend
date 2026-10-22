@@ -5,3 +5,4 @@ temp_interactive_push.bat
 .env
 .env.*
 !.env.example
+.gitignore
