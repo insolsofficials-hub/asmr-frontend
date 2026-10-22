@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import JoinPage from './pages/JoinPage';
+import EventRegisterPage from './pages/eventRegisterPage';
 import MembershipNetworkPage from './pages/MembershipNetworkPage';
 import MembershipBenefitsPage from './pages/MembershipBenefitsPage';
 import WorkshopsPage from './pages/WorkshopsPage';
@@ -19,6 +20,8 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/join" element={<ProtectedRoute><JoinPage /></ProtectedRoute>} />
+      <Route path="/register" element={<ProtectedRoute><EventRegisterPage /></ProtectedRoute>} />
+      <Route path="/eventRegisterPage" element={<EventRegisterPage />} />
       <Route path="/portal" element={<ProtectedRoute><PortalPage /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute admin><AdminPortalPage /></ProtectedRoute>} />
       <Route path="/reviewer" element={<ProtectedRoute reviewer><ReviewerPortalPage /></ProtectedRoute>} />
